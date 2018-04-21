@@ -417,39 +417,33 @@ public class Decryption {
 	        	}
 	        	int index = 0;
 	        	boolean foundWords = false;
-	        	while(foundWords == false) {
-	        		if(!scannerDictionaryCypher.hasNext()) {
-		        		System.out.println("if");
 
-	        			try {
-	       				scannerDictionaryCypher = new Scanner(new File("dictionary"));
+       		for(int i =dec.length(); i > index; i--) {
+         				System.out.println("restarting ");
 
-	       			} catch (FileNotFoundException e) {
-	       				// TODO Auto-generated catch block
-	       				e.printStackTrace();
-	       			}
-	        		} else {
-		        		System.out.println("else");
+    			try {
+   				scannerDictionaryCypher = new Scanner(new File("dictionary"));
 
-	        		String word = scannerDictionaryCypher.next();
-	        		if(word == "shelter")
-	        		System.out.println(word);
-	        		
-	        		for(int i =index; i< dec.length(); i++) {
-	        			if(dec.substring(index, i) == word) {
-	        				System.out.println("word found: " + word);
-	        				index = i;
-	        			scannerDictionaryCypher.close();
-
-	        			}
-	        			if(index == dec.length()-1) {
-	        				foundWords = true;
-	        				System.out.println("Decryption: " + dec + "verified");
-	        			}
-	        		}
-	        		}
-	        	}
+   			} catch (FileNotFoundException e) {
+   				// TODO Auto-generated catch block
+   				e.printStackTrace();
+   			}
+    			String sub = dec.substring(index, i);
+    			while(scannerDictionaryCypher.hasNext()) {
+    				String word = scannerDictionaryCypher.next();
+    				if(sub.equals(word)) {
+        				System.out.println("word found: " + word);
+        				index = i;
+        				System.out.println("index found: " + index);
+        			scannerDictionaryCypher.close();
+        		break;
+    			}
+       		}
+    			if(index == dec.length()-1) {
+				System.out.println("exit while");
+    			}
 	        }
+	        	}
 
 	        else {
 	            System.out.println("Message doesn't meet conditions of Playfair!");
