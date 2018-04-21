@@ -271,11 +271,11 @@ public class Decryption {
 	 
 
 
-	    public String decryptMessage(String Code)
+	    public StringBuilder decryptMessage(String Code)
 
 	    {
 
-	        String Original = new String();
+	        StringBuilder Original = new StringBuilder("");
 
 	        String src_arr[] = Divid2Pairs(Code);
 
@@ -355,9 +355,9 @@ public class Decryption {
 
 	            }
 
-	            Original = Original + matrix_arr[part1[0]][part1[1]]
+	            Original.append(matrix_arr[part1[0]][part1[1]]);
 
-	                    + matrix_arr[part2[0]][part2[1]];
+	            Original.append(matrix_arr[part2[0]][part2[1]]);
 
 	        }
 
@@ -371,54 +371,118 @@ public class Decryption {
 
 	    {
 
-	       Decryption x = new Decryption();
+	       Decryption descryption = new Decryption();
 
-	        Scanner sc = null;
+	        Scanner scanner = null;
+	        Scanner scannerDictionary = null;
+	        Scanner scannerDictionaryCypher = null;
+
 			try {
-				sc = new Scanner(new File("data.txt"));
+				scanner = new Scanner(new File("data"));
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+	        try {
+				scannerDictionary = new Scanner(new File("dictionary"));
+				scannerDictionaryCypher = new Scanner(new File("dictionary"));
+
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
 
-	        int keylength = Integer.parseInt(sc.next());
-	        String ciphertext = sc.next();
+	        int keylength = Integer.parseInt(scanner.next());
+	        String ciphertext = scanner.next();
 	        
-	        // ADD WORD API
-//	        x.setKey(ciphertext);
-//
-//	        x.KeyGen();
-
-	        System.out
-
-	                .println("Enter word to encrypt: (Make sure length of message is even)");
+//	        while(scannerDictionary.hasNext()) {
+//	        	String key = scannerDictionary.next();
+	        descryption.setKey("charles");
+	        descryption.KeyGen();
+	        System.out.println("Enter word to encrypt: (Make sure length of message is even)");
 
 	       
 
-	        if (ciphertext.length() % 2 == 0)
+	        	if (verify(ciphertext)) {
+	        	StringBuilder dec =  descryption.decryptMessage(ciphertext);
+	        	for (int i = 1 ; i < dec.length()-1 ; i++) {
+	        	    char c = dec.charAt(i);
+	        	    char prefix = dec.charAt(i-1);
+	        	    char postfix = dec.charAt(i+1);
+	        	    if(c == 'x' && prefix == postfix) {
+	        	    	dec.deleteCharAt(i);
+	        	    }
+	        	}
+	        	int index = 0;
+	        	boolean foundWords = false;
+	        	while(foundWords == false) {
+	        		if(!scannerDictionaryCypher.hasNext()) {
+		        		System.out.println("if");
 
-	        {
+	        			try {
+	       				scannerDictionaryCypher = new Scanner(new File("dictionary"));
 
-	           /* System.out.println("Encryption: " + x.encryptMessage(key_input));
+	       			} catch (FileNotFoundException e) {
+	       				// TODO Auto-generated catch block
+	       				e.printStackTrace();
+	       			}
+	        		} else {
+		        		System.out.println("else");
 
-	            System.out.println("Decryption: "
+	        		String word = scannerDictionaryCypher.next();
+	        		if(word == "shelter")
+	        		System.out.println(word);
+	        		
+	        		for(int i =index; i< dec.length(); i++) {
+	        			if(dec.substring(index, i) == word) {
+	        				System.out.println("word found: " + word);
+	        				index = i;
+	        			scannerDictionaryCypher.close();
 
-	                    + x.decryptMessage(x.encryptMessage(key_input)));*/
-
+	        			}
+	        			if(index == dec.length()-1) {
+	        				foundWords = true;
+	        				System.out.println("Decryption: " + dec + "verified");
+	        			}
+	        		}
+	        		}
+	        	}
 	        }
 
-	        else
-
-	        {
-
-	            System.out.println("Message length should be even");
-
+	        else {
+	            System.out.println("Message doesn't meet conditions of Playfair!");
 	        }
+	        	scanner.close();
+	        	
+//	    }
 
-	        sc.close();
+}
 
-	    }
-	
+		private static boolean verify(String ciphertext) {
+			
+			boolean isPlayfair = true;
+			if(ciphertext.length() % 2 == 0) {
+
+			for(int i = 0; i <ciphertext.length(); i=i+2 ) {
+        	    char c1 = ciphertext.charAt(i);
+        	    char c2 = ciphertext.charAt(i+1);
+        	    if(c1 == c2) {
+        	    	isPlayfair = false;
+        	    }   
+			}
+			for(int i = 0; i <ciphertext.length(); i++ ) {
+        	    char c1 = ciphertext.charAt(i);
+        	    if(!Character.isAlphabetic(c1)) {
+        	    	isPlayfair = false;
+        	    }
+			
+			}
+		} else {
+			isPlayfair = false;
+		}
+			return isPlayfair;
+		}
 
 }
