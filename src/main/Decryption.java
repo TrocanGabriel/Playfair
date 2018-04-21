@@ -102,8 +102,6 @@ public class Decryption {
 
 	        }
 
-	        System.out.println(Key);
-
 	        matrix();
 
 	    }
@@ -126,13 +124,12 @@ public class Decryption {
 
 	                matrix_arr[i][j] = Key.charAt(counter);
 
-	                System.out.print(matrix_arr[i][j] + " ");
+	               
 
 	                counter++;
 
 	            }
 
-	            System.out.println();
 
 	        }
 
@@ -365,101 +362,7 @@ public class Decryption {
 
 	    }
 
-	 
-
-	    public static void main(String[] args)
-
-	    {
-
-	       Decryption descryption = new Decryption();
-
-	        Scanner scanner = null;
-	        Scanner scannerDictionary = null;
-	        Scanner scannerDictionaryCypher = null;
-
-			try {
-				scanner = new Scanner(new File("data"));
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-	        try {
-				scannerDictionary = new Scanner(new File("dictionary"));
-				scannerDictionaryCypher = new Scanner(new File("dictionary"));
-
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-
-	        int keylength = Integer.parseInt(scanner.next());
-	        String ciphertext = scanner.next();
-	        
-//	        while(scannerDictionary.hasNext()) {
-//	        	String key = scannerDictionary.next();
-	        descryption.setKey("charles");
-	        descryption.KeyGen();
-	        System.out.println("Enter word to encrypt: (Make sure length of message is even)");
-
-	       
-
-	        	if (verify(ciphertext)) {
-	        	StringBuilder dec =  descryption.decryptMessage(ciphertext);
-	        	for (int i = 1 ; i < dec.length()-1 ; i++) {
-	        	    char c = dec.charAt(i);
-	        	    char prefix = dec.charAt(i-1);
-	        	    char postfix = dec.charAt(i+1);
-	        	    if(c == 'x' && prefix == postfix) {
-	        	    	dec.deleteCharAt(i);
-	        	    }
-	        	}
-	        	int index = 0;
-	        	boolean foundWords = false;
-
-       		for(int i =dec.length()-1; i >= index; i--) {
-
-    			try {
-   				scannerDictionaryCypher = new Scanner(new File("dictionary"));
-
-   			} catch (FileNotFoundException e) {
-   				// TODO Auto-generated catch block
-   				e.printStackTrace();
-   			}
-    			String sub = dec.substring(index, i);
-    			while(scannerDictionaryCypher.hasNext()) {
-    				String word = scannerDictionaryCypher.next();
-    				if(sub.equals(word)) {
-        				System.out.println("word found: " + word);
-        				index = i;
-        				i = dec.length()-1;
-        				System.out.println("index found: " + index);
-        			scannerDictionaryCypher.close();
-        		break;
-    			}
-       		}
-    			if(index == dec.length()-1) {
-				System.out.println("exit while");
-				foundWords = true;
-    			}
-
-	        	
-
-	        }
-       		
-	        	}
-
-	        else {
-	            System.out.println("Message doesn't meet conditions of Playfair!");
-	        }
-	        	scanner.close();
-	        	
-//	    }
-
-}
-
-		private static boolean verify(String ciphertext) {
+private static boolean verify(String ciphertext) {
 			
 			boolean isPlayfair = true;
 			if(ciphertext.length() % 2 == 0) {
@@ -484,4 +387,108 @@ public class Decryption {
 			return isPlayfair;
 		}
 
+
+	    public static void main(String[] args)
+
+	    {
+
+	       Decryption descryption = new Decryption();
+	       
+	       String correctKey = null;
+	       String correctMessage = null;
+	        Scanner scanner = null;
+	        Scanner scannerDictionary = null;
+	        Scanner scannerDictionaryCypher = null;
+
+			try {
+				scanner = new Scanner(new File("data"));
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+	        try {
+				scannerDictionary = new Scanner(new File("dictionary"));
+				scannerDictionaryCypher = new Scanner(new File("words"));
+
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+
+	        int keylength = Integer.parseInt(scanner.next());
+	        String ciphertext = scanner.next();
+	        
+	        if (verify(ciphertext)) {
+	        while(scannerDictionary.hasNext()) {
+	        	String keyTest = scannerDictionary.next();
+	        	
+	        		if (keyTest.length() == keylength) {
+		        		System.out.print("key: " + keyTest);
+	        descryption.setKey(keyTest);
+	        descryption.KeyGen();
+	       
+	        
+	        	StringBuilder dec =  descryption.decryptMessage(ciphertext);
+	        	System.out.println(" with plain text: " + dec);
+	        	for (int i = 1 ; i < dec.length()-1 ; i++) {
+	        	    char c = dec.charAt(i);
+	        	    char prefix = dec.charAt(i-1);
+	        	    char postfix = dec.charAt(i+1);
+	        	    if(c == 'x' && prefix == postfix) {
+	        	    	dec.deleteCharAt(i);
+	        	    }
+	        	}
+	        	int index = dec.length();
+	        	boolean foundWords = false;
+
+       		for(int i = 0; i <= index; i++) {
+
+    			try {
+   				scannerDictionaryCypher = new Scanner(new File("words"));
+
+   			} catch (FileNotFoundException e) {
+   				// TODO Auto-generated catch block
+   				e.printStackTrace();
+   			}
+    			String sub = dec.substring(i, index);
+    			while(scannerDictionaryCypher.hasNext()) {
+    				String word = scannerDictionaryCypher.next();
+    				if(sub.equals(word)) {
+        				System.out.println("word found: " + word);
+        				index = i;
+        				i = -1;
+        				System.out.println("index found: " + index);
+        			scannerDictionaryCypher.close();
+        		break;
+    			}
+       		}
+    			if(index == 0) {
+		  		correctMessage = dec.toString();
+     		 	correctKey = keyTest;
+     		 break;
+    			}
+	      
+	        }
+       		
+	        	}
+	        	}
+	        }
+	        else {
+	            System.out.println("Message doesn't meet conditions of Playfair!");
+	            
+	        }
+	        		        		        
+	    
+	        if(correctKey != null) {
+	        	System.out.println("THE CORRECT KEY: " + correctKey + " with message : " +correctMessage);
+	        }
+	        
+	        scannerDictionary.close();
+	        scanner.close();
+}
+	    
+
+		
 }
