@@ -418,8 +418,7 @@ public class Decryption {
 	        	int index = 0;
 	        	boolean foundWords = false;
 
-       		for(int i =dec.length(); i > index; i--) {
-         				System.out.println("restarting ");
+       		for(int i =dec.length()-1; i >= index; i--) {
 
     			try {
    				scannerDictionaryCypher = new Scanner(new File("dictionary"));
@@ -434,6 +433,7 @@ public class Decryption {
     				if(sub.equals(word)) {
         				System.out.println("word found: " + word);
         				index = i;
+        				i = dec.length()-1;
         				System.out.println("index found: " + index);
         			scannerDictionaryCypher.close();
         		break;
@@ -441,8 +441,13 @@ public class Decryption {
        		}
     			if(index == dec.length()-1) {
 				System.out.println("exit while");
+				foundWords = true;
     			}
+
+	        	
+
 	        }
+       		
 	        	}
 
 	        else {
